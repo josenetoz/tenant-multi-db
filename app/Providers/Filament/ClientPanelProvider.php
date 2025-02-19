@@ -5,33 +5,30 @@ namespace App\Providers\Filament;
 use Filament\Http\Middleware\{Authenticate, AuthenticateSession, DisableBladeIconComponents, DispatchServingFilamentEvent};
 use Filament\Support\Colors\Color;
 use Filament\{Pages, Panel, PanelProvider, Widgets};
-use Filament\Support\Enums\MaxWidth;
 use Illuminate\Cookie\Middleware\{AddQueuedCookiesToResponse, EncryptCookies};
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Stancl\Tenancy\Middleware\{InitializeTenancyBySubdomain, PreventAccessFromCentralDomains};
 
-class AdminPanelProvider extends PanelProvider
+class ClientPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->default()
-            ->id('admin')
-            ->path('admin')
+            ->id('client')
+            ->path('client')
             ->login()
             ->colors([
                 'primary' => Color::Amber,
             ])
-            ->maxContentWidth(MaxWidth::Full)
-            ->sidebarCollapsibleOnDesktop()
-            ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
-            ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
+            ->discoverResources(in: app_path('Filament/Client/Resources'), for: 'App\\Filament\\Client\\Resources')
+            ->discoverPages(in: app_path('Filament/Client/Pages'), for: 'App\\Filament\\Client\\Pages')
             ->pages([
                 Pages\Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\\Filament\\Admin\\Widgets')
+            ->discoverWidgets(in: app_path('Filament/Client/Widgets'), for: 'App\\Filament\\Client\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
@@ -47,7 +44,10 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
-            ->viteTheme('resources/css/filament/admin/theme.css')
+            ->middleware([
+                InitializeTenancyBySubdomain::class,
+                PreventAccessFromCentralDomains::class,
+            ], isPersistent: true)
             ->authMiddleware([
                 Authenticate::class,
             ]);

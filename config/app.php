@@ -51,9 +51,11 @@ return [
     | the application so that it's available within Artisan commands.
     |
     */
+    'host' => env('APP_HOST', 'localhost'),
+
+    'scheme' => env('APP_SCHEME', 'http'),
 
     'url' => env('APP_URL', 'http://localhost'),
-
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
