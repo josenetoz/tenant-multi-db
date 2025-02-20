@@ -9,9 +9,4 @@ class CreateTenant extends CreateRecord
 {
     protected static string $resource = TenantResource::class;
 
-    public function beforeCreate(array $data): array
-    {
-        dd($data);
-        return $data;
-    }
 }
